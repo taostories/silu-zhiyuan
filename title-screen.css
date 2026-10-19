@@ -1,0 +1,22 @@
+.title-screen{position:relative;min-height:100svh;display:grid;place-items:center;overflow:hidden;background:#e0d1ac;isolation:isolate}
+.title-landscape{position:absolute;inset:0;z-index:-2}
+.title-landscape img{width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+.title-screen:before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 50% 42%,#efe2c6d9 0%,#eadcbd9c 25%,#dfd1b347 52%,#3d51412b 100%),linear-gradient(0deg,#405b4944,transparent 40%,#eee2c666)}
+.title-center{display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:-4vh;padding:40px 22px}
+.title-center h1{font-family:var(--serif);font-weight:400;font-size:clamp(72px,9vw,148px);letter-spacing:.2em;padding-left:.2em;line-height:1.5;color:#294c42;text-shadow:0 2px 18px #f4e7c8c9;margin:0}
+.title-rule{display:flex;align-items:center;gap:18px;color:#98794d;font-size:16px;margin:16px 0 58px}
+.title-rule span{display:block;width:85px;height:1px;background:linear-gradient(90deg,transparent,#98794d)}
+.title-rule span:last-child{transform:scaleX(-1)}
+.title-enter{font:22px var(--serif);letter-spacing:5px;min-width:224px;min-height:60px;padding:15px 28px;border:1px solid #647761;background:#f4e8c9d9;color:#294e42;box-shadow:0 6px 24px #3b4f3620;transition:background .2s,box-shadow .2s}
+.title-enter:hover{background:#f8efdb;box-shadow:0 8px 30px #3b4f3630}
+.title-enter span{margin-left:10px;letter-spacing:0}
+@media(max-width:650px){.title-center h1{font-size:clamp(52px,13vw,80px);letter-spacing:.14em;padding-left:.14em;white-space:nowrap}.title-center{margin-top:-6vh;padding:30px 12px}.title-rule{margin:15px 0 44px;gap:13px}.title-rule span{width:55px}.title-enter{font-size:20px;min-width:200px;min-height:56px}.title-landscape img{object-position:45% center}}
+
+.title-center h1:has(.title-logo){padding:0;line-height:0;letter-spacing:0}
+.title-logo{display:block;width:min(840px,77vw);height:auto;max-height:40svh;object-fit:contain}
+.title-screen:before{background:radial-gradient(ellipse at 50% 42%,#f4e5c54d,transparent 60%),linear-gradient(0deg,#405b4926,transparent 45%)}
+@media(max-width:650px){.title-logo{width:89vw}.title-center{margin-top:-4vh}}
+
+.finale-stage h1:has(.finale-logo){line-height:0;letter-spacing:0;margin:8px 0 20px}
+.finale-logo{display:block;width:min(400px,78vw);height:auto;margin:auto;filter:brightness(0) invert(92%) sepia(19%) saturate(334%)}
+@media(max-width:650px){.finale-logo{width:min(290px,78vw)}.finale-stage h1:has(.finale-logo){margin:8px 0 18px}}
