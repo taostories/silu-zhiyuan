@@ -9,7 +9,7 @@
 .jb-train img{width:100%;height:100%;object-fit:contain;display:block}.jb-train:has(img){width:48px;height:25px}
 @media(max-width:650px){.jb-train:has(img){width:35px;height:20px}}
 /* The rail puzzle sits in the mountain pass; arrows align with tile ports. */
-.jb-rail-board{background:linear-gradient(#e8dbb58c,#d4c19655),url('assets/alashankou.jpg') center/cover;border-color:#8c8e6b;box-shadow:0 9px 26px #5a51312b}
+.jb-rail-board{background:linear-gradient(#e8dbb58c,#d4c19655),url('assets/alashankou.webp') center/cover;border-color:#8c8e6b;box-shadow:0 9px 26px #5a51312b}
 .jb-rail-tile{background:#f5e8c56e;border-color:#7f8d6c66;box-shadow:inset 0 0 10px #e9dbb544}.jb-rail-tile:hover{background:#d9e2bea6}.jb-rail-tile.traversed{background:#bed1aca6}
 .jb-rail-start,.jb-rail-end{writing-mode:horizontal-tb;gap:0;width:28px;height:28px;font-size:0;letter-spacing:0;transform:translateY(-50%);background:#f6e9c9;border:1px solid #8e9a72;border-radius:50%;z-index:4;overflow:visible}
 .jb-rail-start{top:calc(12.5% + 4.875px);left:0}.jb-rail-end{top:calc(37.5% + 1.625px);right:0}.jb-rail-start span,.jb-rail-end span{font-size:24px;line-height:1;letter-spacing:0;color:#3d6951}

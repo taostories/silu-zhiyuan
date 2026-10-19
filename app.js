@@ -49,6 +49,7 @@
     const logo=$('.title-logo');if(logo)logo.onerror=()=>{logo.parentElement.textContent='丝路知远';};
     const image=$('.title-landscape img');image.onerror=()=>{image.onerror=null;image.src=assets.map;};
     $('#enter-game').onclick=()=>{if(!data.prologueDone)showPrologue();else if(data.epilogueStarted)showEpilogue(data.epilogueStep,data.epilogueLine);else showMap();};
+    window.SILU_LOADING?.warm([!data.prologueDone?assets[story.prologue[data.prologueLine].scene||'packing']:data.epilogueStarted?assets.opening:assets.map]);
   }
   function unlocked(i){return Number.isInteger(i)&&i>=0&&i<4&&data.completed.slice(0,i).every(Boolean);}
   function nextStation(){const n=data.completed.findIndex(v=>!v);return n<0?3:n;}
@@ -57,6 +58,13 @@
   function bindHeader(){root.querySelectorAll('[data-home]').forEach(b=>b.onclick=()=>showMap());}
   function character(row){if(row.kind!=='dialogue')return '';const key=row.speaker==='爷爷'?'grandfather':row.speaker==='顾老师'?'scholar':'traveler';return '<div class="scene-character" data-character="'+key+'">'+(assets[key]?'<img src="'+escape(assets[key])+'" alt="'+escape(row.speaker)+'" data-character-fallback="'+key+'">':art.person(key))+'</div>';}
   function background(id){return `<div class="scene-background">${assets[id]?`<img src="${escape(assets[id])}" alt="" data-fallback="${id}">`:art.scene[id]}</div>`;}
+  function warmDialogue(rows, line, scene) {
+    const images=rows.slice(line+1,line+4).flatMap(row=>{
+      const person=row.speaker==='顾老师'?'scholar':row.speaker==='爷爷'?'grandfather':'traveler';
+      return [assets[row.scene||scene],row.kind==='dialogue'?assets[person]:row.kind==='message'?assets.avatars?.[person]:null];
+    });
+    window.SILU_LOADING?.warm(images);
+  }
   function imageFallback(){root.querySelectorAll('img[data-character-fallback]').forEach(img=>{const fallback=()=>{img.parentElement.innerHTML=art.person(img.dataset.characterFallback);};img.onerror=fallback;if(img.complete&&!img.naturalWidth)fallback();});root.querySelectorAll('img[data-fallback]').forEach(img=>img.onerror=()=>{img.parentElement.innerHTML=img.dataset.fallback==='map'?art.map:art.scene[img.dataset.fallback];});}
   const nodes=[{x:.074,y:.69},{x:.255,y:.55},{x:.52,y:.65},{x:.927,y:.51}];
   const passing=[{name:'张掖',x:.338,y:.57},{name:'嘉峪关',x:.425,y:.61},{name:'玉门关',x:.604,y:.59},{name:'阳关',x:.655,y:.67},{name:'吐鲁番',x:.747,y:.54},{name:'库车',x:.837,y:.57}];
@@ -72,6 +80,7 @@
     const all=data.completed.every(Boolean);
     root.innerHTML=`${header(true)}<main class="home"><div class="map-scroll" tabindex="0" aria-label="丝路长卷，可横向拖动。点击地点前往，抵达后单独进入。"><div class="map-world"><div class="map-art">${assets.map?`<img src="${escape(assets.map)}" alt="丝路长卷" data-fallback="map">`:art.map}</div><svg class="map-road" viewBox="0 0 1000 680" preserveAspectRatio="none"><path class="road-shadow" d="${route.map((p,i)=>`${i?'L':'M'}${p.x*1000} ${p.y*680}`).join(' ')}"/><path class="road-line" d="${route.map((p,i)=>`${i?'L':'M'}${p.x*1000} ${p.y*680}`).join(' ')}"/></svg>${chapters.map((c,i)=>`<button class="map-node ${data.completed[i]?'complete':''} ${unlocked(i)?'':'locked'}" data-station="${i}" aria-disabled="${!unlocked(i)}" style="left:${nodes[i].x*100}%;top:${nodes[i].y*100}%" aria-label="${c.place}，${data.completed[i]?'已完成，可重访':unlocked(i)?'点击前往':'尚未开启'}"><span class="node-ring"></span><strong class="node-title">${c.place}</strong><span class="node-caption">${data.completed[i]?'已走过':unlocked(i)?'此程出发':'待前程抵达'}</span></button>`).join('')}${passing.map(p=>`<div class="waypoint" tabindex="0" aria-label="${p.name}，途经地，无剧情" style="left:${p.x*100}%;top:${p.y*100}%"><span>${p.name}</span><span class="way-tip" role="tooltip">${escape(story.waypoints.find(w=>w.name===p.name)?.text||'')}</span></div>`).join('')}<div class="traveler ${assets.mapTravelerWalk?'has-walk-sheet':''}" id="traveler">${mapTraveler()}</div></div></div><div class="map-bottom"><div class="map-current" id="map-current"></div><div class="map-navigation"><div class="map-pan"><button data-pan="-1" aria-label="向东浏览">←</button><span class="scroll-track"><i></i></span><button data-pan="1" aria-label="向西浏览">→</button></div><button class="${all?'outline':'primary'}" id="enter-station"></button>${all?`<button class="primary" id="view-ending">重看尾声 ↗</button>`:''}</div></div></main>`;
     bindHeader();imageFallback();positionTraveler(data.traveler);updateMapSelection();
+    window.SILU_LOADING?.warm([assets[chapters[selected].id],assets.scholar]);
     const walkSheet=$('[data-walk-sheet]');
     if(walkSheet){const fallback=()=>{const t=$('#traveler');if(!t)return;t.classList.remove('has-walk-sheet');t.innerHTML=art.person();};walkSheet.onerror=fallback;if(walkSheet.complete&&!walkSheet.naturalWidth)fallback();}
     const scroll=$('.map-scroll'),world=$('.map-world');
@@ -169,6 +178,7 @@
     const controls='<button class="text-button" id="previous" '+(line===0?'disabled':'')+'>← 上一句</button><button class="primary" id="next">'+(last?'沿丝路出发 ↗':'继续 →')+'</button>';
     root.innerHTML=background(scene)+'<header class="topbar opening-topbar"><span class="brand"><span class="brand-mark">知<br>远</span>丝路知远</span></header>'+(row.kind==='message'?'<main class="mail-stage prologue-mail">'+heading+messageScene(row,line,story.prologue.length,controls,story.prologue)+'</main>':'<main class="story-stage opening-stage" data-scene="'+scene+'">'+heading+character(row)+'<section class="dialogue" aria-label="序章对话"><p class="dialogue-text" aria-live="polite">'+escape(row.text)+'</p><div class="dialogue-controls">'+controls+'</div></section></main>');
     imageFallback();positionChat();$('#previous').onclick=()=>{if(line>0){data.prologueLine--;save();showPrologue();}};$('#next').onclick=()=>{if(!last){data.prologueLine++;save();showPrologue();}else{data.prologueDone=true;save();if(data.epilogueStarted)showEpilogue(data.epilogueStep,data.epilogueLine);else showMap();}};
+    warmDialogue(story.prologue,line,'packing');
   }
   function showDialogue(){
     view='dialogue';change();const c=chapters[current],cp=data.chapters[current],lines=cp.stage==='after'?c.after:introLines(c);
@@ -183,6 +193,7 @@
       root.innerHTML=background(c.id)+header()+'<main class="story-stage">'+heading+(c.annotation&&cp.stage==='intro'&&line===0?'<button class="hotspot" aria-expanded="false"><span class="pulse-dot"></span>'+c.annotation.label+' ＋</button>':'')+(row.kind==='dialogue'?'<div class="scene-character" data-character="'+portrait+'">'+(assets[portrait]?'<img src="'+escape(assets[portrait])+'" alt="'+(scholar?'顾老师':'青年')+'">':art.person(portrait))+'</div>':'')+'<section class="dialogue" aria-label="剧情对话" style="--progress:'+((line+1)/lines.length*100)+'%"><p class="dialogue-text" aria-live="polite">'+escape(row.text)+'</p><div class="dialogue-controls">'+controls+'</div></section></main>';
     }
     bindHeader();imageFallback();positionChat();$('#previous').onclick=()=>{if(line>0){cp.line--;save();showDialogue();}};
+    warmDialogue(lines,line,c.id);
     $('#next').onclick=()=>{if(!last){cp.line++;save();showDialogue();}else if(cp.stage==='after'){if(cp.passed)finishChapter();}else{cp.stage='game';cp.line=0;save();showGame();}};
     if($('.hotspot'))$('.hotspot').onclick=()=>{const b=$('.hotspot');if($('.annotation')){$('.annotation').remove();b.setAttribute('aria-expanded','false');return;}const note=document.createElement('aside');note.className='annotation';note.innerHTML='<button aria-label="收起注解">×</button><p>'+escape(c.annotation.text)+'</p>'+(c.annotation.source?'<a class="annotation-source" href="'+escape(c.annotation.source.url)+'" target="_blank" rel="noopener noreferrer">'+escape(c.annotation.source.label)+' ↗</a>':'');$('.story-stage').append(note);b.setAttribute('aria-expanded','true');note.querySelector('button').onclick=()=>{note.remove();b.setAttribute('aria-expanded','false');b.focus();};};
   }

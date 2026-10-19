@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const track = new Audio('assets/audio/ripples.mp3');
+  const track = new Audio('assets/audio/ripples-web.mp3');
   track.loop = true;
   track.preload = 'none';
   let enabled = true, volume = .2, unlocked = false, quietScene = false, failed = false;
@@ -15,7 +15,7 @@
   const dialog = document.createElement('dialog');
   dialog.className = 'music-dialog';
   dialog.setAttribute('aria-labelledby', 'music-title');
-  dialog.innerHTML = '<button class="music-close" aria-label="关闭音乐设置">×</button><h2 id="music-title">背景音乐</h2><p class="music-status" aria-live="polite"></p><button class="primary music-toggle"></button><label class="music-volume">音量<input type="range" min="0" max="50" value="20" aria-label="背景音乐音量"></label><p class="music-credit">《Ripples》 — Kevin MacLeod<br><a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100691" target="_blank" rel="noopener noreferrer">incompetech.com</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a><br>原曲未改动，低音量循环播放。</p>';
+  dialog.innerHTML = '<button class="music-close" aria-label="关闭音乐设置">×</button><h2 id="music-title">背景音乐</h2><p class="music-status" aria-live="polite"></p><button class="primary music-toggle"></button><label class="music-volume">音量<input type="range" min="0" max="50" value="20" aria-label="背景音乐音量"></label><p class="music-credit">《Ripples》 — Kevin MacLeod<br><a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100691" target="_blank" rel="noopener noreferrer">incompetech.com</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a><br>已压缩音频以加快加载，低音量循环播放。</p>';
   document.body.append(dialog);
   function paint() {
     button.classList.toggle('music-muted', !enabled || quietScene);
